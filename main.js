@@ -8,7 +8,7 @@ stage.canvas.height = window.innerHeight;
 
 //Create a Shape DisplayObject.
 var circle = new createjs.Shape();
-circle.graphics.beginFill("green").drawCircle(0, 0, 40);
+circle.graphics.beginFill("red").drawCircle(0, 0, 40);
 
 //Set position of Shape instance.
 circle.x = circle.y = 50;
@@ -17,7 +17,7 @@ circle.x = circle.y = 50;
 stage.addChild(circle);
 
 var finger = new createjs.Shape();
-finger.graphics.beginFill("red").drawCircle(0, 0, 15);
+finger.graphics.beginFill("yellow").drawCircle(0, 0, 20);
 finger.x = finger.y = 50;
 stage.addChild(finger);
 
@@ -73,12 +73,12 @@ function setPositions(pos){
         //-200 => +200
         var newX = pos.x;
         var diffX = newX - circle.x;
-        circle.x += (diffX >0) ? Math.min(diffX, speed) : Math.max(diffX, -speed);
+        circle.x += (diffX >0) ? speed : -speed;
         //+400 (max 500)
         // +20 (min 0)
         var newY = pos.y;
         diffY = newY - circle.y;
-        circle.y += (diffY >0) ? Math.min(diffY, speed) : Math.max(diffY, -speed);
+        circle.y += (diffY >0) ? speed : -speed;
         
         finger.x = newX;
         finger.y = newY;
@@ -94,7 +94,7 @@ function setPositions(pos){
 }
 
 function mouseLoop(){
-    console.log('mouseLoop', mouseEvent);
+    //console.log('mouseLoop', mouseEvent);
     if(mouseEvent && mouseEvent.x && mouseEvent.y){
         setPositions(mouseEvent);
     }
@@ -105,7 +105,7 @@ var mouseEvent = false;
 setTimeout(function() {
     if(!leapWorks){
         stage.canvas.addEventListener('mousemove', function(e){
-            console.log('mousemove event', e);
+            //console.log('mousemove event', e);
             mouseEvent = e;
         }, false);
         
