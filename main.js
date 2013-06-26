@@ -19,8 +19,16 @@ stage.addChild(circle);
 var finger = new createjs.Shape();
 finger.graphics.beginFill("yellow").drawCircle(0, 0, 15);
 finger.x = finger.y = 50;
-finger.alpha = .5;
+finger.alpha = 0.6;
 stage.addChild(finger);
+
+var start = new createjs.Shape();
+start.graphics.beginFill("yellow").drawRect(0, 0, 20, 80);
+stage.addChild(start);
+
+var finish = new createjs.Shape();
+finish.graphics.beginFill("green").drawRect(stage.canvas.width-100, stage.canvas.height/2, 20, 80);
+stage.addChild(finish);
 
 //Update stage will render next frame
 stage.update();
@@ -77,21 +85,16 @@ function setPositions(pos){
     var newX = pos.x;
     var newY = pos.y;
 
-    finger.x = newX;
-    finger.y = newY;
+    finger.x = newX - 10;
+    finger.y = newY - 10;
 
     createjs.Tween.removeTweens(circle);
     createjs.Tween.get(circle, { override:true })
         .to({
             x: newX,
             y: newY
-        }, 1000, createjs.Ease.backOut).call(tweenComplete);
+        }, 4000, createjs.Ease.backOut);
 
-}
-
-
-function tweenComplete(){
-    console.log('animation complete')
 }
 
 function mouseLoop(){
@@ -114,3 +117,14 @@ setTimeout(function() {
 
     }
 }, 100);
+
+
+createjs.Sound.addEventListener("fileload", createjs.proxy(this.loadHandler, this));
+//from http://openmusicarchive.org/browse_tag.php?tag=classical
+ createjs.Sound.registerSound("Intro_And_Tarantelle.mp3", "sound");
+ function loadHandler(event) {
+     // This is fired for each sound that is registered.
+     var instance = createjs.Sound.play("sound");  // play using id.  Could also use full sourcepath or event.src.
+     instance.addEventListener("complete", createjs.proxy(this.handleComplete, this));
+     instance.setVolume(0.5);
+ }
