@@ -17,8 +17,9 @@ circle.x = circle.y = 50;
 stage.addChild(circle);
 
 var finger = new createjs.Shape();
-finger.graphics.beginFill("yellow").drawCircle(0, 0, 20);
+finger.graphics.beginFill("yellow").drawCircle(0, 0, 15);
 finger.x = finger.y = 50;
+finger.alpha = .5;
 stage.addChild(finger);
 
 //Update stage will render next frame
@@ -48,6 +49,8 @@ var diffX, diffY, maxMomentum=50, momentum=maxMomentum;
 
 var leapWorks = false;
 
+var lastPos = {x: 0, y: 0};
+
 Leap.loop(function(frame) {
 
     cursor(frame);
@@ -60,43 +63,35 @@ Leap.loop(function(frame) {
         x: stage.canvas.width/2 + (stage.canvas.width * 3 * pos.x/400),
         y: stage.canvas.height -  (stage.canvas.height * 3 * pos.y/400) + 300
     };
-    setPositions(pos);
+    if(lastPos.x != newPos.x || lastPos.y != newPos.y){
+        setPositions(pos);
+        lastPos = newPos;
+    }
+
     //done();
 
 });
-    var speed = 2.5;
 
-function normalize(diff, speed){
-    return (diff >0) ? Math.min(diff, speed) : Math.max(diff, -speed);
-}
 function setPositions(pos){
-    var diffX;
 
-    if(pos && pos.x && pos.y){
+    var newX = pos.x;
+    var newY = pos.y;
+
+    finger.x = newX;
+    finger.y = newY;
+
+    createjs.Tween.removeTweens(circle);
+    createjs.Tween.get(circle, { override:true })
+        .to({
+            x: newX,
+            y: newY
+        }, 1000, createjs.Ease.backOut).call(tweenComplete);
+
+}
 
 
-        momentum += (momentum < maxMomentum) ? 1 : 0;
-        //-200 => +200
-        var newX = pos.x;
-        diffX = newX - circle.x;
-        circle.x += normalize(diffX, speed);
-        //+400 (max 500)
-        // +20 (min 0)
-        var newY = pos.y;
-        diffY = newY - circle.y;
-        circle.y += normalize(diffY, speed);
-
-        finger.x = newX;
-        finger.y = newY;
-
-    }else if(momentum > 0) {
-        var mom = (momentum--)/maxMomentum;
-        circle.x += ((diffX >0) ? speed : -speed) * mom;
-        circle.y += ((diffY >0) ? speed : -speed) * mom;
-        circle.color = "purple";
-        //finger.x = newX;
-        //finger.y = newY;
-    }
+function tweenComplete(){
+    console.log('animation complete')
 }
 
 function mouseLoop(){
