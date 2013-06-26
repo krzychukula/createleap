@@ -41,17 +41,17 @@ function handleTick() {
 var cursor = new Leap.UI.Cursor();
 
 var log = function(str) {
-     document.getElementById('out').innerHTML = "<pre>" + str + "</pre>"
-}
-    
+     document.getElementById('out').innerHTML = "<pre>" + str + "</pre>";
+};
+
 var diffX, diffY, maxMomentum=50, momentum=maxMomentum;
 
 var leapWorks = false;
 
 Leap.loop(function(frame) {
-    
+
     cursor(frame);
-    
+
     leapWorks = true;
 
     var pos = frame.cursorPosition;
@@ -59,30 +59,36 @@ Leap.loop(function(frame) {
     var newPos = {
         x: stage.canvas.width/2 + (stage.canvas.width * 3 * pos.x/400),
         y: stage.canvas.height -  (stage.canvas.height * 3 * pos.y/400) + 300
-    }
+    };
     setPositions(pos);
     //done();
 
 });
     var speed = 2.5;
+
+function normalize(diff, speed){
+    return (diff >0) ? Math.min(diff, speed) : Math.max(diff, -speed);
+}
 function setPositions(pos){
+    var diffX;
+
     if(pos && pos.x && pos.y){
-        
-        
+
+
         momentum += (momentum < maxMomentum) ? 1 : 0;
         //-200 => +200
         var newX = pos.x;
-        var diffX = newX - circle.x;
-        circle.x += (diffX >0) ? speed : -speed;
+        diffX = newX - circle.x;
+        circle.x += normalize(diffX, speed);
         //+400 (max 500)
         // +20 (min 0)
         var newY = pos.y;
         diffY = newY - circle.y;
-        circle.y += (diffY >0) ? speed : -speed;
-        
+        circle.y += normalize(diffY, speed);
+
         finger.x = newX;
         finger.y = newY;
-          
+
     }else if(momentum > 0) {
         var mom = (momentum--)/maxMomentum;
         circle.x += ((diffX >0) ? speed : -speed) * mom;
@@ -108,8 +114,8 @@ setTimeout(function() {
             //console.log('mousemove event', e);
             mouseEvent = e;
         }, false);
-        
+
         createjs.Ticker.addEventListener("tick", mouseLoop);
-        
+
     }
 }, 100);
