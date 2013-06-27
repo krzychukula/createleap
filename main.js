@@ -49,8 +49,11 @@ function handleTick() {
 
 var cursor = new Leap.UI.Cursor();
 
-var log = function(str) {
+var log = function(str, cons) {
      document.getElementById('out').innerHTML = "<pre>" + str + "</pre>";
+     if(cons){
+        console.log(str);
+     }
 };
 
 var diffX, diffY, maxMomentum=50, momentum=maxMomentum;
@@ -100,6 +103,7 @@ function setPositions(pos){
 function mouseLoop(){
     //console.log('mouseLoop', mouseEvent);
     if(mouseEvent && mouseEvent.x && mouseEvent.y){
+        log(mouseEvent);
         setPositions(mouseEvent);
     }
 }
@@ -108,6 +112,7 @@ var mouseEvent = false;
 
 setTimeout(function() {
     if(!leapWorks){
+        log("leap doesn't work", true);
         stage.canvas.addEventListener('mousemove', function(e){
             //console.log('mousemove event', e);
             mouseEvent = e;
@@ -115,8 +120,10 @@ setTimeout(function() {
 
         createjs.Ticker.addEventListener("tick", mouseLoop);
 
+    }else{
+        log('Leap Motion works', true);
     }
-}, 100);
+}, 1000);
 
 
 createjs.Sound.addEventListener("fileload", createjs.proxy(this.loadHandler, this));
