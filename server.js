@@ -8,6 +8,6 @@ app.get('/', function(request, response) {
 
 var port = process.env.PORT || 5000;
 var ip = process.env.IP || 'localhost';
-app.listen(port, ip, function() {
+app.listen(port, function() {
   console.log("Listening on " + ip + port);
 });
